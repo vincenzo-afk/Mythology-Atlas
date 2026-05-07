@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🏛️ Mythology Atlas</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/vis-timeline@7.5.0/dist/vis-timeline-graph2d.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="culture-greek">
+
+  <!-- TOP NAV BAR -->
+  <nav id="topNav">
+    <div id="navLogo">🏛️ <span>MYTHOLOGY ATLAS</span></div>
+    <div id="cultureButtons">
+      <button class="culture-btn active" data-culture="greek" style="--btn-color:#3a7bd5">🏛️ Greek</button>
+      <button class="culture-btn" data-culture="norse" style="--btn-color:#7b5ea7">⚡ Norse</button>
+      <button class="culture-btn" data-culture="egyptian" style="--btn-color:#e8b86d">🦅 Egyptian</button>
+      <button class="culture-btn" data-culture="hindu" style="--btn-color:#e05c2a">🕉️ Hindu</button>
+      <button class="culture-btn" data-culture="japanese" style="--btn-color:#d45555">⛩️ Japanese</button>
+      <button class="culture-btn" data-culture="celtic" style="--btn-color:#4a9e6b">🍀 Celtic</button>
+      <button class="culture-btn" data-culture="aztec" style="--btn-color:#c94040">☀️ Aztec</button>
+    </div>
+    <button id="themeToggle" onclick="toggleTheme()">☀️ Light</button>
+  </nav>
+
+  <!-- MAIN TABS BAR -->
+  <div id="tabsBar">
+    <button class="tab-btn active" data-tab="map">🗺️ World Map</button>
+    <button class="tab-btn" data-tab="tree">🌳 Family Tree</button>
+    <button class="tab-btn" data-tab="monsters">👾 Monsters</button>
+    <button class="tab-btn" data-tab="battle">⚔️ Battle Sim</button>
+    <button class="tab-btn" data-tab="stories">📜 Stories</button>
+    <button class="tab-btn" data-tab="artifacts">🏺 Artifacts</button>
+    <button class="tab-btn" data-tab="timeline">📅 Timeline</button>
+    <button class="tab-btn" data-tab="constellations">⭐ Constellations</button>
+  </div>
+
+  <!-- TAB PANELS -->
+  <main id="mainContent">
+
+    <div id="tab-map" class="tab-panel active">
+      <div id="mapContainer"></div>
+    </div>
+
+    <div id="tab-tree" class="tab-panel">
+      <div id="treeHeader">
+        <h2 id="treeTitle">Divine Family Tree</h2>
+        <p id="treeHint">✦ Drag nodes &bull; Scroll to zoom &bull; Click for details ✦</p>
+      </div>
+      <svg id="familyTreeSvg"></svg>
+    </div>
+
+    <div id="tab-monsters" class="tab-panel">
+      <div id="monstersHeader">
+        <h2 class="section-title">Creatures &amp; Monsters</h2>
+        <input type="text" id="monsterSearchInput" placeholder="Search creatures..." oninput="filterMonsters()">
+      </div>
+      <div id="monstersGrid"></div>
+    </div>
+
+    <div id="tab-battle" class="tab-panel">
+      <div id="battleArena">
+        <h2 class="section-title">⚔️ Divine Battle Simulator</h2>
+        <div id="battleSelectors">
+          <div class="combatant-section">
+            <h3>⚔️ Challenger</h3>
+            <select id="challengerSelect" onchange="updateCombatantCard('challenger')"></select>
+            <div id="challengerCard" class="combatant-card"></div>
+          </div>
+          <div id="vsContainer">
+            <div id="vsLogo">VS</div>
+            <button id="battleBtn" onclick="runBattle()">⚔️ BATTLE!</button>
+          </div>
+          <div class="combatant-section">
+            <h3>🛡️ Opponent</h3>
+            <select id="opponentSelect" onchange="updateCombatantCard('opponent')"></select>
+            <div id="opponentCard" class="combatant-card"></div>
+          </div>
+        </div>
+        <div id="battleResult">
+          <div id="winnerAnnounce"></div>
+          <div id="battleLog"></div>
+          <button id="battleAgainBtn" onclick="resetBattle()">⚔️ Battle Again</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-stories" class="tab-panel">
+      <h2 class="section-title">Sacred Stories &amp; Epics</h2>
+      <div id="storiesGrid"></div>
+    </div>
+
+    <div id="tab-artifacts" class="tab-panel">
+      <h2 class="section-title">Divine Artifacts &amp; Relics</h2>
+      <div id="artifactsGrid"></div>
+    </div>
+
+    <div id="tab-timeline" class="tab-panel">
+      <h2 class="section-title">Mythological Timeline</h2>
+      <div id="timelineContainer"></div>
+    </div>
+
+    <div id="tab-constellations" class="tab-panel">
+      <div id="constHeader">
+        <h2 class="section-title">⭐ Constellation Map</h2>
+        <p class="section-hint">Hover over constellations to reveal their myths &bull; Click for full details</p>
+      </div>
+      <svg id="constellationSvg"></svg>
+    </div>
+
+  </main>
+
+  <!-- DETAIL MODAL -->
+  <div id="detailModal" onclick="closeModalOutside(event)">
+    <div id="modalContent">
+      <button id="modalClose" onclick="closeModal()">✕</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- SIDE PANEL -->
+  <div id="sidePanel">
+    <button id="sidePanelClose" onclick="closeSidePanel()">✕</button>
+    <div id="sidePanelContent"></div>
+  </div>
+  <div id="sideOverlay" onclick="closeSidePanel()"></div>
+
+  <!-- SCRIPTS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="https://unpkg.com/vis-timeline@7.5.0/dist/vis-timeline-graph2d.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
